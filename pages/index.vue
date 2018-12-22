@@ -1,13 +1,4 @@
 <template lang="html">
-  <!-- <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
-    <link rel="shortcut icon" href="src/assets/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="src/assets/favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-    <title>To-do app</title>
-  </head> -->
   <div id="app">
     <TodoHeader></TodoHeader>
     <TodoInput v-on:add-todo="addTodo"></TodoInput>
@@ -25,15 +16,6 @@ import axios from 'axios'
 
 
 export default {
-  // head tag
-  head () {
-    return {
-        link: [  { rel: "stylesheet", href: "https://use.fontawesome.com/releases/v5.0.10/css/all.css" },
-                 { rel: "stylesheet", href: "https://fonts.googleapis.com/css?family=Ubuntu" }
-               ],
-    }
-  },
-
   // Reactivity(2): TodoList
   data() {
     return {
