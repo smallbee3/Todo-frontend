@@ -21,6 +21,7 @@ import TodoHeader from '~/components/TodoHeader.vue'
 import TodoInput from '~/components/TodoInput.vue'
 import TodoList from '~/components/TodoList.vue'
 import TodoFooter from '~/components/TodoFooter.vue'
+import axios from 'axios'
 
 
 export default {
@@ -36,33 +37,39 @@ export default {
   // Reactivity(2): TodoList
   data() {
     return {
+      // 181223
+      // todoItems: {}
+      // -> Vue's Reactivity not support 'object' data type
+
       todoItems: []
     }
   },
   created() {
-    // if (localStorage.length > 0) {
-    //   for (var i = 0; i < localStorage.length; i++) {
-    //     this.todoItems.push(localStorage.key(i));
+    // var allCookies = this.getAllCookies();
+    // if (allCookies.length > 0) {
+    //   for (var i = 0; i < allCookies.length; i++) {
+    //     // console.log('Before: ', this.todoItems);
+    //     this.todoItems.push(allCookies[i]);
+    //     // console.log('After: ', this.todoItems);
     //   }
     // }
-    var allCookies = this.getAllCookies();
-    if (allCookies.length > 0) {
-      for (var i = 0; i < allCookies.length; i++) {
-        this.todoItems.push(allCookies[i]);
+
+    axios({
+      url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/',
+      method: 'get'
+    }).then((response) => {
+      for (var i of response.data.results) {
+        this.todoItems.push(i);
       }
-    }
+    }).catch((error) => {
+      console.log(error);
+      console.log(error.response);
+    });
+    // console.log('todoItems: ', this.todoItems);
   },
   methods:{
     // cookie
     setCookie(name,value,days) {
-        // var expires = "";
-        // if (days) {
-        //     var date = new Date();
-        //     date.setTime(date.getTime() + (days*24*60*60*1000));
-        //     expires = "; expires=" + date.toUTCString();
-        // }
-        // document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-
         // 'cookie-universal-nuxt
         this.$cookies.set(name, (value || ""), {
           path: '/',
@@ -70,33 +77,14 @@ export default {
         })
     },
     getCookie(name) {
-        // var nameEQ = name + "=";
-        // var ca = document.cookie.split(';');
-        // for(var i=0;i < ca.length;i++) {
-        //     var c = ca[i];
-        //     while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        //     if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-        // }
-        // return null;
-
         // 'cookie-universal-nuxt
         const cookieRes = this.$cookies.get(name);
         if (cookieRes) return cookieRes;
         return null;
 
+
     },
     getAllCookies() {
-        // var allCookies = [];
-        // var ca = document.cookie.split(';');
-        // for(var i=0;i < ca.length;i++) {
-        //     var c = ca[i];
-        //     while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        //     if (c.indexOf('csrftoken')=='-1') {
-        //       allCookies.unshift(c.substring(0,c.indexOf('=')));
-        //     }
-        // }
-        // return allCookies;
-
         // 'cookie-universal-nuxt
         var allCookies = [];
         var cookieObjects = this.$cookies.getAll();
@@ -107,55 +95,88 @@ export default {
         return allCookies;
     },
     deleteCookie(name) {
-      // document.cookie = name+'=; Max-Age=-99999999;';
-
       // 'cookie-universal-nuxt
       this.$cookies.remove(name);
     },
     deleteAllCookies() {
-        // var ca = document.cookie.split(';');
-        // for(var i=0;i < ca.length;i++) {
-        //     var c = ca[i];
-        //     while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        //     if (c.indexOf('csrftoken')=='-1') {
-        //       var name = c.substring(0,c.indexOf('='))
-        //       console.log(name);
-        //       document.cookie = name+'=; Max-Age=-99999999;';
-        //     }
-        // }
-
-        // 'cookie-universal-nuxt
-        this.$cookies.removeAll();
+      // 'cookie-universal-nuxt
+      this.$cookies.removeAll();
     },
+
 
     // Reactivity(1): TodoInput - adding new item
     addTodo(value) {
       // This below code is the reason of changing the whole code p.160
-      this.todoItems.unshift(value);
+      // this.todoItems.push(value);
 
-      this.setCookie(value, value, 7);
+      // this.setCookie(value, value, 7);
+      axios({
+        url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/',
+        method: 'post',
+        data: {
+          contents: value
+        }
+      }).then((response) => {
+        this.todoItems.unshift(response.data);
+      }).catch((error) => {
+        console.log(error);
+        console.log(error.response);
+      });
     },
     // Reactivity(4): TodoList(removeTodo)
     removeTodo(item, index) {
-      this.deleteCookie(item);
-
-      this.todoItems.splice(index, 1);
+      // this.deleteCookie(item);
+      axios({
+        url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/' + item.pk + '/',
+        method: 'delete'
+      }).then((response) => {
+        this.todoItems.splice(index, 1);
+      }).catch((error) => {
+        console.log(error);
+        console.log(error.response);
+      });
     },
     // Reactivity(3): TodoFooter
     clearTodo() {
       // this.todoItems.splice(0, this.todoItems.length);
+
+      // this.deleteAllCookies();
+      for (var index in this.todoItems) {
+        axios({
+          url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/' + this.todoItems[index].pk + '/',
+          method: 'delete'
+        }).then((response) => {
+          this.todoItems.splice(index, 1);
+        }).catch((error) => {
+          console.log(error);
+          console.log(error.response);
+        });
+      }
+
       this.todoItems = [];
 
-      this.deleteAllCookies();
     },
-    editTodo(item, index) {
-      var deleteItem = this.todoItems[index];
+    editTodo(value, index) {
+      // var deleteItem = this.todoItems[index];
+      //
+      // this.deleteCookie(deleteItem);
+      // this.todoItems.splice(index, 1);
+      //
+      // this.setCookie(item, item, 7);
+      // this.todoItems.push(item);
 
-      this.deleteCookie(deleteItem);
-      this.todoItems.splice(index, 1);
-
-      this.setCookie(item, item, 7);
-      this.todoItems.push(item);
+      axios({
+        url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/' + this.todoItems[index].pk + '/',
+        method: 'put',
+        data: {
+          contents: value
+        }
+      }).then((response) => {
+        this.todoItems[index].contents = value;
+      }).catch((error) => {
+        console.log(error);
+        console.log(error.response);
+      });
     }
   },
   components: {

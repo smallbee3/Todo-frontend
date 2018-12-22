@@ -1,15 +1,11 @@
 <template lang="html">
   <section>
     <transition-group name="list" tag="ul">
-      <!-- <li v-for="(item, index) in todoItems" class="shadow"> -->
 
       <!-- Reactivity(2): TodoList -->
-      <li v-for="(item, index) in propsdata" v-bind:key="item" class="shadow">
+      <li v-for="(item, index) in propsdata" v-bind:key="item.pk" class="shadow">
         <i class="checkBtn fas fa-check" aria-hidden="true"></i>
-        <!-- {{ item != 'loglevel:webpack-dev-server' ? item : '' }} -->
-        {{ item }}
-        <!-- <span class="removeBtn" type="button" v-on:click="removeTodo"> -->
-
+        {{ item.contents }}
         <span class="editBtn" type="button" v-on:click="editTodo(item, index)">
           <i class="fas fa-pencil-alt" aria-hidden="true"></i>
         </span>
@@ -26,8 +22,8 @@
       <!-- <span slot="footer" v-on:click="showEditModal = false"> -->
       <span slot="footer">
         <input class="inputBox" type="text" v-model="editTodoItem" placeholder=this.editTodoItem
-        v-on:keyup.enter="addEditTodo();showEditModal = false">
-        <i class="writeModalBtn fas fa-pencil-alt" aria-hidden="true" v-on:click="addEditTodo();showEditModal = false"></i>
+        v-on:keyup.enter="doEditTodo();showEditModal = false">
+        <i class="writeModalBtn fas fa-pencil-alt" aria-hidden="true" v-on:click="doEditTodo();showEditModal = false"></i>
         <i class="closeModalBtn fas fa-times" aria-hidden="true" v-on:click="showEditModal = false"></i>
       </span>
     </modal>
@@ -65,20 +61,16 @@ export default {
 
   methods: {
     removeTodo(item, index) {
-      // localStorage.removeItem(item);
-      // this.todoItems.splice(index, 1);
-
       // Reactivity(4): TodoList(removeTodo)
       this.$emit('remove-todo', item, index)
     },
     editTodo(item, index) {
-      // console.log(item, index);
       this.showEditModal = !this.showEditModal;
-      this.editTodoItem = item;
+      this.editTodoItem = item.contents;
       this.editIndex = index;
     },
-    addEditTodo() {
-      console.log(this.editTodoItem, this.editIndex);
+    doEditTodo() {
+      // console.log(this.editTodoItem, this.editIndex);
       this.$emit('edit-todo', this.editTodoItem, this.editIndex);
     }
   },
@@ -124,7 +116,7 @@ export default {
   }
   .list-enter, .list-leave-to {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateX(-30px);
   }
 
 </style>
