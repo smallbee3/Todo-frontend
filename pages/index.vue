@@ -14,6 +14,8 @@ import TodoList from '~/components/TodoList.vue'
 import TodoFooter from '~/components/TodoFooter.vue'
 import axios from 'axios'
 
+// const API_URL_ADDRESS = 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com';
+const API_URL_ADDRESS = 'http://localhost:8000';
 
 export default {
   // Reactivity(2): TodoList
@@ -37,7 +39,7 @@ export default {
     // }
 
     axios({
-      url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/',
+      url: `${API_URL_ADDRESS}/card/`,
       method: 'get'
     }).then((response) => {
       for (var i of response.data.results) {
@@ -93,7 +95,7 @@ export default {
 
       // this.setCookie(value, value, 7);
       axios({
-        url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/',
+        url: `${API_URL_ADDRESS}/card/`,
         method: 'post',
         data: {
           contents: value
@@ -109,7 +111,7 @@ export default {
     removeTodo(item, index) {
       // this.deleteCookie(item);
       axios({
-        url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/' + item.pk + '/',
+        url: `${API_URL_ADDRESS}/card/${item.pk}/`,
         method: 'delete'
       }).then((response) => {
         this.todoItems.splice(index, 1);
@@ -125,7 +127,7 @@ export default {
       // this.deleteAllCookies();
       for (var index in this.todoItems) {
         axios({
-          url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/' + this.todoItems[index].pk + '/',
+          url: `${API_URL_ADDRESS}/card/${this.todoItems[index].pk}/`,
           method: 'delete'
         }).then((response) => {
           this.todoItems.splice(index, 1);
@@ -148,7 +150,7 @@ export default {
       // this.todoItems.push(item);
 
       axios({
-        url: 'http://trello-eb.ap-northeast-2.elasticbeanstalk.com/card/' + this.todoItems[index].pk + '/',
+        url: `${API_URL_ADDRESS}/card/${this.todoItems[index].pk}/`,
         method: 'put',
         data: {
           contents: value
