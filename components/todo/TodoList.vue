@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import Modal from './modal/Edit.vue'
+import Modal from '../modal/Edit.vue'
 
 export default {
   // data() {

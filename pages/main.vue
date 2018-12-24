@@ -8,10 +8,10 @@
 </template>
 
 <script>
-import TodoHeader from '~/components/TodoApp/TodoHeader.vue'
-import TodoInput from '~/components/TodoApp/TodoInput.vue'
-import TodoList from '~/components/TodoApp/TodoList.vue'
-import TodoFooter from '~/components/TodoApp/TodoFooter.vue'
+import TodoHeader from '~/components/todo/TodoHeader.vue'
+import TodoInput from '~/components/todo/TodoInput.vue'
+import TodoList from '~/components/todo/TodoList.vue'
+import TodoFooter from '~/components/todo/TodoFooter.vue'
 import axios from 'axios'
 
 // const API_URL_ADDRESS = 'https://trello-api.smallbee.me';
@@ -25,7 +25,6 @@ export default {
       // 181223
       // todoItems: {}
       // -> Vue's Reactivity not support 'object' data type
-
       todoItems: []
     }
   },
@@ -38,7 +37,6 @@ export default {
     //     // console.log('After: ', this.todoItems);
     //   }
     // }
-
     axios({
       url: `${API_URL_ADDRESS}/card/`,
       method: 'get'
@@ -53,42 +51,6 @@ export default {
     // console.log('todoItems: ', this.todoItems);
   },
   methods:{
-    // cookie
-    setCookie(name,value,days) {
-        // 'cookie-universal-nuxt
-        this.$cookies.set(name, (value || ""), {
-          path: '/',
-          maxAge: 60 * 60 * 24 * days
-        })
-    },
-    getCookie(name) {
-        // 'cookie-universal-nuxt
-        const cookieRes = this.$cookies.get(name);
-        if (cookieRes) return cookieRes;
-        return null;
-
-
-    },
-    getAllCookies() {
-        // 'cookie-universal-nuxt
-        var allCookies = [];
-        var cookieObjects = this.$cookies.getAll();
-
-        for (var i in cookieObjects) {
-          allCookies.unshift(i);
-        }
-        return allCookies;
-    },
-    deleteCookie(name) {
-      // 'cookie-universal-nuxt
-      this.$cookies.remove(name);
-    },
-    deleteAllCookies() {
-      // 'cookie-universal-nuxt
-      this.$cookies.removeAll();
-    },
-
-
     // Reactivity(1): TodoInput - adding new item
     addTodo(value) {
       // This below code is the reason of changing the whole code p.160
@@ -137,9 +99,7 @@ export default {
           console.log(error.response);
         });
       }
-
       this.todoItems = [];
-
     },
     editTodo(value, index) {
       // var deleteItem = this.todoItems[index];
@@ -149,7 +109,6 @@ export default {
       //
       // this.setCookie(item, item, 7);
       // this.todoItems.push(item);
-
       axios({
         url: `${API_URL_ADDRESS}/card/${this.todoItems[index].pk}/`,
         method: 'put',

@@ -1,9 +1,7 @@
 <template lang="html">
-  <div class="links">
-    <nuxt-link to="/facebook"
-      class="button--green">Facebook Login</nuxt-link>
-    <nuxt-link to="/email"
-      class="button--green">Login</nuxt-link>
+  <div>
+    <nuxt-link to="/login"
+      class="button--green">Start</nuxt-link>
   </div>
 </template>
 
