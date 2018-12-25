@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 // const API_URL_ADDRESS = 'https://trello-api.smallbee.me';
 const API_URL_ADDRESS = 'http://localhost:8000';
 
@@ -62,10 +64,23 @@ export default {
       }
       // http request
       else {
-        console.log(email, password);
         this.warningMessage = '';
       }
-      console.log('Form submitted!')
+      axios({
+        url: `${API_URL_ADDRESS}/user/login/`,
+        method: 'post',
+        data: {
+          username: email,
+          password: password
+        }
+      }).then((response) => {
+        this.setCookie('token', response.data.token, 7);
+        // Vue.setCookie('token', response.data.token, 7);
+        window.location.href = "/main";
+      }).catch(function(error) {
+        console.log(error);
+        console.log(error.response);
+      })
     }
   }
 }
