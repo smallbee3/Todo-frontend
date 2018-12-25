@@ -42,6 +42,7 @@ module.exports = {
     // 'cookie-universal-nuxt'
 
     // With options
-    ['cookie-universal-nuxt', { alias: 'cookies', parseJSON: false }],
-  ]
+    ['cookie-universal-nuxt', { alias: 'cookies', parseJSON: false }]
+  ],
+  plugins: ['~/plugins/vue-inject.js']
 }
