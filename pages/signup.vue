@@ -22,8 +22,8 @@
 <script>
 import axios from 'axios'
 
-// const API_URL_ADDRESS = 'https://trello-api.smallbee.me';
-const API_URL_ADDRESS = 'http://localhost:8000';
+const API_URL_ADDRESS = 'https://trello-api.smallbee.me';
+// const API_URL_ADDRESS = 'http://localhost:8000';
 
 export default {
   data() {
