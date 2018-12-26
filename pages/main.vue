@@ -2,7 +2,11 @@
   <div id="app">
     <TodoHeader></TodoHeader>
     <TodoInput v-on:add-todo="addTodo"></TodoInput>
-    <TodoList v-bind:propsdata="todoItems" v-on:remove-todo="removeTodo" v-on:edit-todo="editTodo"></TodoList>
+    <TodoList v-bind:propsdata="todoItems" v-bind:propsdata2="checkedItems"
+      v-on:remove-todo="removeTodo"
+      v-on:edit-todo="editTodo"
+      v-on:check-todo="checkTodo"
+      ></TodoList>
     <TodoFooter v-on:clear-todo="clearTodo"></TodoFooter>
   </div>
 </template>
@@ -25,18 +29,11 @@ export default {
       // 181223
       // todoItems: {}
       // -> Vue's Reactivity not support 'object' data type
-      todoItems: []
+      todoItems: [],
+      checkedItems: []
     }
   },
   created() {
-    // var allCookies = this.getAllCookies();
-    // if (allCookies.length > 0) {
-    //   for (var i = 0; i < allCookies.length; i++) {
-    //     // console.log('Before: ', this.todoItems);
-    //     this.todoItems.push(allCookies[i]);
-    //     // console.log('After: ', this.todoItems);
-    //   }
-    // }
     const token = this.getCookie('token')
     axios({
       url: `${API_URL_ADDRESS}/card/`,
@@ -47,12 +44,12 @@ export default {
     }).then((response) => {
       for (var i of response.data.results) {
         this.todoItems.push(i);
+        if (i.is_checked == true) this.checkedItems.push(i);
       }
     }).catch((error) => {
       console.log(error);
       console.log(error.response);
     });
-    // console.log('todoItems: ', this.todoItems);
   },
   methods:{
     getCookie(name) {
@@ -85,7 +82,6 @@ export default {
     },
     // Reactivity(4): TodoList(removeTodo)
     removeTodo(item, index) {
-      // this.deleteCookie(item);
       const token = this.getCookie('token')
       axios({
         url: `${API_URL_ADDRESS}/card/${item.pk}/`,
@@ -102,9 +98,6 @@ export default {
     },
     // Reactivity(3): TodoFooter
     clearTodo() {
-      // this.todoItems.splice(0, this.todoItems.length);
-
-      // this.deleteAllCookies();
       const token = this.getCookie('token')
       for (var index in this.todoItems) {
         axios({
@@ -123,13 +116,6 @@ export default {
       this.todoItems = [];
     },
     editTodo(value, index) {
-      // var deleteItem = this.todoItems[index];
-      //
-      // this.deleteCookie(deleteItem);
-      // this.todoItems.splice(index, 1);
-      //
-      // this.setCookie(item, item, 7);
-      // this.todoItems.push(item);
       const token = this.getCookie('token')
       axios({
         url: `${API_URL_ADDRESS}/card/${this.todoItems[index].pk}/`,
@@ -146,6 +132,49 @@ export default {
         console.log(error);
         console.log(error.response);
       });
+    },
+    checkTodo(item) {
+      const token = this.getCookie('token')
+      if (this.checkedItems.indexOf(item) == -1) {
+        console.log('Check!')
+        axios({
+          method: 'patch',
+          url: `${API_URL_ADDRESS}/card/${item.pk}/`,
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+          data: {
+            is_checked: true
+          }
+        }).then((response) => {
+          console.log(response);
+          this.checkedItems.push(item);
+          console.log(this.checkedItems);
+        }).catch((error) => {
+          console.log(error);
+          console.log(error.response);
+        });
+      } else {
+        console.log('Uncheck!')
+        axios({
+          method: 'patch',
+          url: `${API_URL_ADDRESS}/card/${item.pk}/`,
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+          data: {
+            is_checked: false
+          }
+        }).then((response) => {
+          console.log(response);
+          this.checkedItems.splice(this.checkedItems.indexOf(item), 1);
+          console.log(this.checkedItems);
+        }).catch((error) => {
+          console.log(error);
+          console.log(error.response);
+        });
+
+      }
     }
   },
   components: {
