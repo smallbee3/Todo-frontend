@@ -3,13 +3,16 @@
     <transition-group name="list" tag="ul">
 
       <!-- Reactivity(2): TodoList -->
-      <li v-for="(item, index) in propsdata" v-bind:key="item.pk" class="shadow">
-        <i v-bind:style='checkBtnStyle' class="checkBtn fas fa-check" aria-hidden="true"></i>
-        <div id=text-wrap v-on:click='cardCheck'>
+      <li v-for="(item, index) in propsdata"
+       v-bind:key="item.pk" class="shadow">
+        <div id=text-wrap v-on:click="checkToggle(index)">
+          <i class="checkBtn fas fa-check" aria-hidden="true"
+            v-bind:class="{'active-check': activeIndexes.indexOf(index) != -1}"></i>
           <span class='nickname'>
             {{ item.owner.nickname }}
           </span>
-          <span v-bind:style='contentsStyle' class='contents'>
+          <span class='contents'
+            v-bind:class="{'active-text': activeIndexes.indexOf(index) != -1}">
             {{ item.contents }}
           </span>
         </div>
@@ -56,29 +59,20 @@ export default {
 
   // Reactivity(2): TodoList
   props: ['propsdata'],
-
   data() {
     return {
       showEditModal: false,
       editTodoItem: '',
       editIndex: '',
-
-      checkBtnStyle: 'visibility: hidden',
-      contentsStyle: 'text-decoration: none',
+      activeIndexes: [],
     }
   },
-
   methods: {
-    cardCheck() {
-      if (this.checkBtnStyle == 'visibility: visible') {
-        this.checkBtnStyle = 'visibility: hidden';
+    checkToggle(index) {
+      if (this.activeIndexes.indexOf(index) != -1) {
+        this.activeIndexes.splice(this.activeIndexes.indexOf(index), 1);
       } else {
-        this.checkBtnStyle = 'visibility: visible';
-      }
-      if (this.contentsStyle == 'text-decoration: line-through') {
-        this.contentsStyle = 'text-decoration: none';
-      } else {
-        this.contentsStyle = 'text-decoration: line-through';
+        this.activeIndexes.push(index);
       }
     },
     removeTodo(item, index) {
@@ -139,7 +133,6 @@ export default {
     opacity: 0;
     transform: translateX(-30px);
   }
-
   /* cusomed */
   .nickname {
     font-size: 10px;
@@ -151,5 +144,14 @@ export default {
   }
   #text-wrap {
     background-color: lightgray;
+  }
+  .checkBtn {
+    visibility: hidden;
+  }
+  .active-check.checkBtn {
+    visibility: visible;
+  }
+  .active-text.contents {
+    text-decoration: line-through;
   }
 </style>
