@@ -5,11 +5,13 @@
       <!-- Reactivity(2): TodoList -->
       <li v-for="(item, index) in propsdata" v-bind:key="item.pk" class="shadow">
         <i class="checkBtn fas fa-check" aria-hidden="true"></i>
-        {{ item.contents }}
+        <span class='username'>
+          {{ item.owner.nickname }}
+          {{ item.contents }}
+        </span>
         <span class="editBtn" type="button" v-on:click="editTodo(item, index)">
           <i class="fas fa-pencil-alt" aria-hidden="true"></i>
         </span>
-
         <span class="removeBtn" type="button" v-on:click="removeTodo(item, index)">
           <i class="far fa-trash-alt" aria-hidden="true"></i>
         </span>
@@ -89,9 +91,9 @@ export default {
   }
   li {
     display: flex;
-    min-height: 50px;
-    height: 50px;
-    line-height: 50px;
+    min-height: 60px;
+    height: 60px;
+    line-height: 60px;
     margin: 0.5rem 0;
     padding: 0 0.9rem;
     background: white;
@@ -117,6 +119,11 @@ export default {
   .list-enter, .list-leave-to {
     opacity: 0;
     transform: translateX(-30px);
+  }
+
+  /* cusomed */
+  .username {
+    font-size: 15px;
   }
 
 </style>
