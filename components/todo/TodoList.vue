@@ -5,14 +5,14 @@
       <!-- Reactivity(2): TodoList -->
       <li v-for="(item, index) in propsdata"
        v-bind:key="item.pk" class="shadow">
-        <div id=text-wrap v-on:click="checkToggle(index)">
+        <div id=text-wrap v-on:click="checkToggle(item)">
           <i class="checkBtn fas fa-check" aria-hidden="true"
-            v-bind:class="{'active-check': activeIndexes.indexOf(index) != -1}"></i>
+            v-bind:class="{'active-check': propsdata2.indexOf(item) != -1}"></i>
           <span class='nickname'>
             {{ item.owner.nickname }}
           </span>
           <span class='contents'
-            v-bind:class="{'active-text': activeIndexes.indexOf(index) != -1}">
+            v-bind:class="{'active-text': propsdata2.indexOf(item) != -1}">
             {{ item.contents }}
           </span>
         </div>
@@ -44,40 +44,30 @@
 import Modal from '../modal/Edit.vue'
 
 export default {
-  // data() {
-  //   return {
-  //     todoItems: []
-  //   }
-  // },
-  // created() {
-  //   if (localStorage.length > 0) {
-  //     for (var i = 0; i < localStorage.length; i++) {
-  //       this.todoItems.push(localStorage.key(i));
-  //     }
-  //   }
-  // },
-
   // Reactivity(2): TodoList
-  props: ['propsdata'],
+  props: [
+    'propsdata',
+    'propsdata2'
+  ],
   data() {
     return {
       showEditModal: false,
       editTodoItem: '',
       editIndex: '',
-      activeIndexes: [],
     }
   },
   methods: {
-    checkToggle(index) {
-      if (this.activeIndexes.indexOf(index) != -1) {
-        this.activeIndexes.splice(this.activeIndexes.indexOf(index), 1);
-      } else {
-        this.activeIndexes.push(index);
-      }
+    getCookie(name) {
+        const cookieRes = this.$cookies.get(name);
+        if (cookieRes) return cookieRes;
+        return null;
+    },
+    checkToggle(item) {
+      this.$emit('check-todo', item);
     },
     removeTodo(item, index) {
       // Reactivity(4): TodoList(removeTodo)
-      this.$emit('remove-todo', item, index)
+      this.$emit('remove-todo', item, index);
     },
     editTodo(item, index) {
       this.showEditModal = !this.showEditModal;
@@ -85,7 +75,6 @@ export default {
       this.editIndex = index;
     },
     doEditTodo() {
-      // console.log(this.editTodoItem, this.editIndex);
       this.$emit('edit-todo', this.editTodoItem, this.editIndex);
     }
   },
