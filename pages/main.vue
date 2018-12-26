@@ -37,9 +37,13 @@ export default {
     //     // console.log('After: ', this.todoItems);
     //   }
     // }
+    const token = this.getCookie('token')
     axios({
       url: `${API_URL_ADDRESS}/card/`,
-      method: 'get'
+      method: 'get',
+      headers: {
+        Authorization: `Token ${token}`
+      }
     }).then((response) => {
       for (var i of response.data.results) {
         this.todoItems.push(i);
@@ -51,17 +55,26 @@ export default {
     // console.log('todoItems: ', this.todoItems);
   },
   methods:{
+    getCookie(name) {
+        const cookieRes = this.$cookies.get(name);
+        if (cookieRes) return cookieRes;
+        return null;
+    },
     // Reactivity(1): TodoInput - adding new item
     addTodo(value) {
       // This below code is the reason of changing the whole code p.160
       // this.todoItems.push(value);
 
       // this.setCookie(value, value, 7);
+      const token = this.getCookie('token')
       axios({
         url: `${API_URL_ADDRESS}/card/`,
         method: 'post',
         data: {
           contents: value
+        },
+        headers: {
+          Authorization: `Token ${token}`
         }
       }).then((response) => {
         this.todoItems.unshift(response.data);
@@ -73,9 +86,13 @@ export default {
     // Reactivity(4): TodoList(removeTodo)
     removeTodo(item, index) {
       // this.deleteCookie(item);
+      const token = this.getCookie('token')
       axios({
         url: `${API_URL_ADDRESS}/card/${item.pk}/`,
-        method: 'delete'
+        method: 'delete',
+        headers: {
+          Authorization: `Token ${token}`
+        }
       }).then((response) => {
         this.todoItems.splice(index, 1);
       }).catch((error) => {
@@ -88,10 +105,14 @@ export default {
       // this.todoItems.splice(0, this.todoItems.length);
 
       // this.deleteAllCookies();
+      const token = this.getCookie('token')
       for (var index in this.todoItems) {
         axios({
           url: `${API_URL_ADDRESS}/card/${this.todoItems[index].pk}/`,
-          method: 'delete'
+          method: 'delete',
+          headers: {
+            Authorization: `Token ${token}`
+          }
         }).then((response) => {
           this.todoItems.splice(index, 1);
         }).catch((error) => {
@@ -109,11 +130,15 @@ export default {
       //
       // this.setCookie(item, item, 7);
       // this.todoItems.push(item);
+      const token = this.getCookie('token')
       axios({
         url: `${API_URL_ADDRESS}/card/${this.todoItems[index].pk}/`,
         method: 'put',
         data: {
           contents: value
+        },
+        headers: {
+          Authorization: `Token ${token}`
         }
       }).then((response) => {
         this.todoItems[index].contents = value;
