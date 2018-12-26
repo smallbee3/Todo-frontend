@@ -4,11 +4,15 @@
 
       <!-- Reactivity(2): TodoList -->
       <li v-for="(item, index) in propsdata" v-bind:key="item.pk" class="shadow">
-        <i class="checkBtn fas fa-check" aria-hidden="true"></i>
-        <span class='username'>
-          {{ item.owner.nickname }}
-          {{ item.contents }}
-        </span>
+        <i v-bind:style='checkBtnStyle' class="checkBtn fas fa-check" aria-hidden="true"></i>
+        <div id=text-wrap v-on:click='cardCheck'>
+          <span class='nickname'>
+            {{ item.owner.nickname }}
+          </span>
+          <span v-bind:style='contentsStyle' class='contents'>
+            {{ item.contents }}
+          </span>
+        </div>
         <span class="editBtn" type="button" v-on:click="editTodo(item, index)">
           <i class="fas fa-pencil-alt" aria-hidden="true"></i>
         </span>
@@ -57,11 +61,26 @@ export default {
     return {
       showEditModal: false,
       editTodoItem: '',
-      editIndex: ''
+      editIndex: '',
+
+      checkBtnStyle: 'visibility: hidden',
+      contentsStyle: 'text-decoration: none',
     }
   },
 
   methods: {
+    cardCheck() {
+      if (this.checkBtnStyle == 'visibility: visible') {
+        this.checkBtnStyle = 'visibility: hidden';
+      } else {
+        this.checkBtnStyle = 'visibility: visible';
+      }
+      if (this.contentsStyle == 'text-decoration: line-through') {
+        this.contentsStyle = 'text-decoration: none';
+      } else {
+        this.contentsStyle = 'text-decoration: line-through';
+      }
+    },
     removeTodo(item, index) {
       // Reactivity(4): TodoList(removeTodo)
       this.$emit('remove-todo', item, index)
@@ -122,8 +141,15 @@ export default {
   }
 
   /* cusomed */
-  .username {
+  .nickname {
+    font-size: 10px;
+    font-weight: 800;
+    color: skyblue;
+  }
+  .contents {
     font-size: 15px;
   }
-
+  #text-wrap {
+    background-color: lightgray;
+  }
 </style>
